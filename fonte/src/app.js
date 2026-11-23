@@ -128,6 +128,8 @@
   if (float) {
     var key = 'wa-closed';
     try { if (sessionStorage.getItem(key)) float.classList.add('closed'); } catch (e) {}
+    /* o balão aparece aos 6s (CSS) e some 30s depois */
+    setTimeout(function () { float.classList.add('gone'); }, reduce ? 30000 : 36000);
     var close = $('.wa-close', float);
     if (close) close.addEventListener('click', function () {
       float.classList.add('closed');

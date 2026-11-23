@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /404.html
+
+Sitemap: https://www.farmavida.com.br/sitemap.xml

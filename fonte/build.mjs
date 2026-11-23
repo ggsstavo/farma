@@ -10,6 +10,7 @@ import * as solid from '@fortawesome/free-solid-svg-icons';
 import * as brands from '@fortawesome/free-brands-svg-icons';
 import { site as S } from './config.mjs';
 import { categories, products } from './products.mjs';
+import { details } from './details.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.resolve(here, '../site');
@@ -101,7 +102,7 @@ const navItem = (file, text, active) => `<a href="${file}"${active ? ' aria-curr
 
 function header(active) {
   return `<a class="skip" href="#main">Pular para o conteúdo</a>
-<div class="topbar"><div class="container"><span>${ic('truck-fast')} Frete grátis acima de R$ ${S.freeShippingFrom}</span><span>${ic('shield-halved')} Compra segura pelo WhatsApp</span><span>${ic('user-doctor')} Farmacêutico à sua disposição</span></div></div>
+<div class="topbar"><div class="container"><span>${ic('truck-fast')} Frete grátis acima de R$ ${S.freeShippingFrom}</span><span>${ic('shield-halved')} Compra segura pelo WhatsApp</span><span>${ic('user-doctor')} Vendedor à sua disposição</span></div></div>
 <header class="header"><div class="container hdr">
 <a class="logo" href="index.html" aria-label="${esc(S.name)} – página inicial"><svg class="logo-mark" aria-hidden="true"><use href="#i-logo"/></svg><span>${esc(S.name.split(' ')[0])} <b>${esc(S.name.split(' ').slice(1).join(' '))}</b></span></a>
 <nav class="nav" id="nav" aria-label="Principal">
@@ -117,18 +118,16 @@ function footer() {
   return `<footer class="footer"><div class="container">
 <div class="f-grid">
 <div><a class="logo" href="index.html" aria-label="${esc(S.name)}"><svg class="logo-mark" aria-hidden="true"><use href="#i-logo"/></svg><span>${esc(S.name.split(' ')[0])} <b>${esc(S.name.split(' ').slice(1).join(' '))}</b></span></a>
-<p class="f-about">Cuidado de verdade com você e sua família: atendimento humano, orientação farmacêutica e entrega rápida.</p>
+<p class="f-about">Cuidado de verdade com você e sua família: atendimento humano, orientação personalizada e entrega rápida.</p>
 <div class="social"><a class="wa" href="${wa(hello)}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">${ic('whatsapp')}</a><a href="${esc(S.facebook)}" target="_blank" rel="noopener noreferrer" aria-label="Facebook">${ic('facebook-f')}</a><a href="${esc(S.instagram)}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">${ic('instagram')}</a></div></div>
 <div><h2 class="f-title">Navegue</h2><div class="f-links"><a href="index.html">Início</a><a href="produtos.html">Produtos</a><a href="index.html#como-comprar">Como comprar</a><a href="contato.html">Contato</a><a href="privacidade.html">Política de privacidade</a></div></div>
 <div><h2 class="f-title">Atendimento</h2><ul class="f-contact">
 <li>${ic('whatsapp')}<a href="${wa(hello)}" target="_blank" rel="noopener noreferrer">${esc(S.phoneDisplay)} (WhatsApp)</a></li>
 <li>${ic('envelope')}<a href="mailto:${esc(S.email)}">${esc(S.email)}</a></li>
-<li>${ic('location-dot')}<span>${esc(addr)}</span></li>
-<li>${ic('clock')}<span>${esc(S.hours[0].label)}: ${S.hours[0].opens.replace(':00', 'h')} às ${S.hours[0].closes.replace(':00', 'h')}</span></li>
+<li>${ic('clock')}<span>Atendimento ${esc(S.hours[0].label.toLowerCase())}: ${S.hours[0].opens.replace(':00', 'h')} às ${S.hours[0].closes.replace(':00', 'h')}</span></li>
 </ul></div>
 </div>
 <div class="legal">
-<p>${esc(S.legalName)} · CNPJ ${esc(S.cnpj)} · AFE/MS nº ${esc(S.afe)} · Farmacêutico(a) responsável: ${esc(S.pharmacist)} – ${esc(S.crf)}</p>
 <p><strong>Medicamentos podem causar efeitos indesejados. Leia a bula e, persistindo os sintomas, o médico deverá ser consultado.</strong> Imagens ilustrativas. Preços e ofertas sujeitos a alteração e à disponibilidade de estoque.</p>
 <p>© ${S.year} ${esc(S.name)}. Todos os direitos reservados. <span class="lock">${ic('lock')} Site protegido por HTTPS</span></p>
 </div></div></footer>`;
@@ -167,6 +166,7 @@ ${floatWa()}
 }
 
 /* ------------------------------------------------------------ componentes */
+const pUrl = (p) => `produto-${p.slug}.html`;
 function card(p, { rank } = {}) {
   const o = off(p);
   const cat = catById[p.cat];
@@ -175,10 +175,10 @@ function card(p, { rank } = {}) {
   const search = `${p.name} ${p.size} ${p.short} ${cat.name}`.toLowerCase();
   return `<article class="card t-${p.cat} reveal" id="${p.slug}" data-cat="${p.cat}" data-search="${esc(search)}">
 ${badge}<div class="card-img"><img src="${IMG[p.slug]}" width="400" height="400" loading="lazy" decoding="async" alt="${esc(p.name)} – ${esc(p.size)}"></div>
-<div class="card-body"><span class="tag">${esc(cat.name)}</span><h3>${esc(p.name)}</h3><span class="size">${esc(p.size)}</span><p class="desc">${esc(p.short)}</p>
+<div class="card-body"><span class="tag">${esc(cat.name)}</span><h3><a class="stretch" href="${pUrl(p)}">${esc(p.name)}</a></h3><span class="size">${esc(p.size)}</span><p class="desc">${esc(p.short)}</p>
 <div class="price-row"><span class="price">${brl(p.price)}</span>${p.old ? `<s class="old">${brl(p.old)}</s>` : ''}${o && badge.includes('best') ? `<span class="off">-${o}%</span>` : ''}</div>
 <a class="btn btn-wa btn-block" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="Comprar ${esc(p.name)} pelo WhatsApp">${ic('whatsapp')} Comprar</a>
-<span class="note">Abre o WhatsApp com seu pedido pronto</span></div></article>`;
+<span class="note">Abre o WhatsApp com seu pedido pronto</span><span class="more-info">Ver detalhes ${ic('arrow-right')}</span><span class="fine">Preço e disponibilidade podem variar conforme o estoque atual. Confirme no WhatsApp.</span></div></article>`;
 }
 
 const artImgs = (a, b, c, first) =>
@@ -190,17 +190,16 @@ const maxVitOff = Math.max(...products.filter((p) => p.cat === 'vitaminas').map(
 const faq = [
   ['Como faço para comprar?', 'É simples: escolha o produto no site e clique em “Comprar”. O WhatsApp abre com a mensagem pronta, é só enviar. Nossa equipe confirma a disponibilidade, o valor e combina a entrega com você.'],
   ['Vocês entregam no meu endereço?', `Sim! Informe seu endereço no WhatsApp e confirmamos o prazo e a taxa. Pedidos acima de R$ ${S.freeShippingFrom} têm frete grátis.`],
-  ['Quais são as formas de pagamento?', 'Aceitamos Pix, cartões de crédito e débito e dinheiro na entrega. Combinamos tudo com você pelo WhatsApp, com total segurança.'],
-  ['Preciso de receita para comprar?', 'Medicamentos isentos de prescrição podem ser comprados direto. Para os que exigem receita, envie uma foto legível da receita pelo WhatsApp e nosso farmacêutico faz a conferência.'],
+  ['Quais são as formas de pagamento?', 'Aceitamos Pix, cartões de crédito e débito, criptomoedas e dinheiro na entrega. Combinamos tudo com você pelo WhatsApp, com total segurança.'],
   ['O site é seguro? Vocês pedem dados do cartão?', 'O site usa conexão segura (HTTPS) e não pede dados de cartão. Todo o pagamento é combinado diretamente com nossa equipe, pelo WhatsApp.'],
 ];
 
 /* ============================================================== INDEX */
 {
   const slide = (n, cls, inner, art) => `<article class="slide ${cls}" role="group" aria-roledescription="slide" aria-label="${n} de 3"><div>${inner}</div>${art}</article>`;
-  const s1 = slide(1, 's1', `<span class="pill">${ic('user-doctor')} Atendimento farmacêutico</span>
+  const s1 = slide(1, 's1', `<span class="pill">${ic('user-doctor')} Atendimento personalizado</span>
 <h1 class="hl">Sua <em>farmácia de confiança</em> a um clique de distância</h1>
-<p class="lead">Escolha seus produtos e finalize pelo WhatsApp. Atendimento humano, entrega rápida e orientação de um farmacêutico de verdade.</p>
+<p class="lead">Escolha seus produtos e finalize pelo WhatsApp. Atendimento humano, entrega rápida e orientação de um vendedor de verdade.</p>
 <div class="btns"><a class="btn btn-wa btn-lg" href="${wa(hello)}" target="_blank" rel="noopener noreferrer">${ic('whatsapp')} Fazer meu pedido</a><a class="btn btn-ghost btn-lg" href="produtos.html">Ver produtos</a></div>
 <ul class="checks"><li>${ic('circle-check')} Sem cadastro</li><li>${ic('circle-check')} Resposta rápida</li><li>${ic('circle-check')} Entrega em casa</li></ul>`,
     artImgs('vitamina-c-1000', 'multivitaminico-a-z', 'omega-3-1000', true));
@@ -211,7 +210,7 @@ const faq = [
     artImgs('colageno-hidrolisado', 'vitamina-d3-2000', 'omega-3-1000', false));
   const s3 = slide(3, 's3', `<span class="pill">${ic('sun')} Cuidado com a pele</span>
 <h2 class="hl">Proteção solar e dermocosméticos para <em>toda a família</em></h2>
-<p class="lead">Pele protegida e hidratada o ano inteiro. Conte com a indicação de um farmacêutico para escolher o produto ideal.</p>
+<p class="lead">Pele protegida e hidratada o ano inteiro. Conte com a indicação de um vendedor para escolher o produto ideal.</p>
 <div class="btns"><a class="btn btn-brand btn-lg" href="produtos.html#dermo">Ver cuidados com a pele ${ic('arrow-right')}</a><a class="btn btn-ghost btn-lg" href="${wa('Olá! Gostaria de uma indicação de protetor solar e hidratante para o meu tipo de pele.')}" target="_blank" rel="noopener noreferrer">${ic('whatsapp')} Pedir indicação</a></div>`,
     artImgs('hidratante-facial', 'protetor-solar-fps50', 'protetor-labial-fps30', false));
 
@@ -224,7 +223,7 @@ const faq = [
 
 <section class="sec-tight"><div class="container"><ul class="trust">
 <li><span class="ico">${ic('truck-fast')}</span><div><strong>Entrega rápida</strong><span>Receba em casa com agilidade</span></div></li>
-<li><span class="ico">${ic('user-doctor')}</span><div><strong>Farmacêutico responsável</strong><span>Orientação profissional</span></div></li>
+<li><span class="ico">${ic('user-doctor')}</span><div><strong>Vendedor responsável</strong><span>Atendimento personalizado</span></div></li>
 <li><span class="ico">${ic('shield-halved')}</span><div><strong>Compra segura</strong><span>Site protegido com HTTPS</span></div></li>
 <li><span class="ico">${ic('hand-holding-heart')}</span><div><strong>Atendimento humano</strong><span>Do primeiro “oi” à entrega</span></div></li>
 </ul></div></section>
@@ -241,8 +240,8 @@ const faq = [
 </div></section>
 
 <section class="sec-tight"><div class="container"><div class="band reveal">
-<div><h2>Ficou com dúvida? Pergunte a um farmacêutico.</h2><p>Tire dúvidas sobre produtos e modo de uso. É grátis e sem compromisso: a gente ajuda você a escolher com segurança.</p></div>
-<a class="btn btn-white btn-lg" href="${wa('Olá! Tenho uma dúvida e gostaria de falar com um farmacêutico.')}" target="_blank" rel="noopener noreferrer">${ic('whatsapp')} Conversar agora</a>
+<div><h2>Ficou com dúvida? Pergunte a um vendedor.</h2><p>Tire dúvidas sobre produtos e modo de uso. É grátis e sem compromisso: a gente ajuda você a escolher com segurança.</p></div>
+<a class="btn btn-white btn-lg" href="${wa('Olá! Tenho uma dúvida e gostaria de falar com um vendedor.')}" target="_blank" rel="noopener noreferrer">${ic('whatsapp')} Conversar agora</a>
 </div></div></section>
 
 <section class="sec defer" id="como-comprar"><div class="container">
@@ -261,13 +260,13 @@ const faq = [
 <section class="sec-tight defer"><div class="container"><div class="cta reveal">
 <h2>Pronto para cuidar de você?</h2>
 <p>Fale com a gente agora e receba atendimento rápido, de pessoas que se importam com a sua saúde.</p>
-<div class="btns"><a class="btn btn-wa btn-lg" href="${wa(hello)}" target="_blank" rel="noopener noreferrer">${ic('whatsapp')} Chamar no WhatsApp</a><a class="btn btn-ghost btn-lg" href="${esc(S.googleReviews)}" target="_blank" rel="noopener noreferrer">${ic('star')} Ver avaliações no Google</a></div>
+<div class="btns"><a class="btn btn-wa btn-lg" href="${wa(hello)}" target="_blank" rel="noopener noreferrer">${ic('whatsapp')} Chamar no WhatsApp</a></div>
 </div></div></section>`;
 
   page({
     file: 'index.html', active: 'index', body,
     title: `${S.name} | Farmácia com entrega rápida e atendimento pelo WhatsApp`,
-    desc: `Farmácia online em ${S.address.city}: vitaminas, dermocosméticos, higiene e bebê. Escolha no site e compre pelo WhatsApp com orientação de um farmacêutico e entrega rápida.`,
+    desc: `Farmácia online em ${S.address.city}: vitaminas, dermocosméticos, higiene e bebê. Escolha no site e compre pelo WhatsApp com orientação de um vendedor e entrega rápida.`,
     ld: [
       {
         '@context': 'https://schema.org', '@type': 'Pharmacy', name: S.name, url: S.domain + '/', image: `${S.domain}/og.png`, logo: `${S.domain}/apple-touch-icon.png`,
@@ -314,9 +313,97 @@ const faq = [
         '@type': 'ListItem', position: i + 1,
         item: {
           '@type': 'Product', name: p.name, description: `${p.short} ${p.size}.`, image: `${S.domain}/${IMG[p.slug]}`, category: catById[p.cat].name,
-          offers: { '@type': 'Offer', price: p.price.toFixed(2), priceCurrency: 'BRL', availability: 'https://schema.org/InStock', url: `${S.domain}/produtos.html#${p.slug}`, seller: { '@type': 'Organization', name: S.name } },
+          offers: { '@type': 'Offer', price: p.price.toFixed(2), priceCurrency: 'BRL', availability: 'https://schema.org/InStock', url: `${S.domain}/${pUrl(p)}`, seller: { '@type': 'Organization', name: S.name } },
         },
       })) },
+    ],
+  });
+}
+
+/* ====================================================== PÁGINAS DE PRODUTO */
+for (const p of products) {
+  const d = details[p.slug];
+  const cat = catById[p.cat];
+  const o = off(p);
+  const save = p.old ? p.old - p.price : 0;
+  const buy = wa(p.msg.replace('{preco}', brl(p.price)));
+  const ask = wa(`Olá! Tenho uma dúvida sobre o produto *${p.name} (${p.size})*. Podem me ajudar?`);
+  const related = products.filter((x) => x.cat === p.cat && x.slug !== p.slug).concat(products.filter((x) => x.cat !== p.cat && x.slug !== p.slug)).slice(0, 4);
+  const isMip = p.cat === 'mip';
+
+  const body = `
+<section class="pd-top"><div class="container">
+<nav class="crumbs" aria-label="Você está em"><a href="index.html">Início</a> › <a href="produtos.html">Produtos</a> › <a href="produtos.html#${p.cat}">${esc(cat.name)}</a> › ${esc(p.name)}</nav>
+<div class="pd">
+<div class="pd-gallery t-${p.cat}"><div class="pd-stage">
+${o ? `<span class="badge badge-off">-${o}%</span>` : ''}${p.best ? `<span class="badge badge-best pd-best">${ic('star')} #${p.best} mais vendido</span>` : ''}
+<img class="pd-img" src="${IMG[p.slug]}" width="400" height="400" fetchpriority="high" decoding="async" alt="${esc(p.name)} – ${esc(p.size)}">
+<span class="chip-float c1">${ic('shield-halved')} Compra segura</span><span class="chip-float c2">${ic('truck-fast')} Entrega rápida</span>
+</div><p class="pd-ill">Imagem ilustrativa</p></div>
+
+<div class="pd-info">
+<span class="tag">${esc(cat.name)}</span>
+<h1 class="pd-title">${esc(p.name)}</h1>
+<p class="size">${esc(p.size)}</p>
+<div class="pd-price">${p.old ? `<s class="old">De ${brl(p.old)}</s>` : ''}
+<div class="pd-now"><span class="price big">${brl(p.price)}</span>${o ? `<span class="off">${o}% OFF</span>` : ''}</div>
+${save ? `<p class="save">${ic('piggy-bank')} Você economiza <strong>${brl(save)}</strong> nesta compra</p>` : ''}
+<p class="pay">${ic('credit-card')} Pix, cartão, criptomoedas ou dinheiro na entrega</p></div>
+<ul class="pd-hl">${d.hl.map((h) => `<li>${ic('circle-check')}<span>${esc(h)}</span></li>`).join('')}</ul>
+<div class="pd-cta"><a class="btn btn-wa btn-lg btn-block" href="${buy}" target="_blank" rel="noopener noreferrer">${ic('whatsapp')} Comprar pelo WhatsApp</a>
+<a class="btn btn-ghost btn-block" href="${ask}" target="_blank" rel="noopener noreferrer">${ic('comments')} Tirar uma dúvida sobre este produto</a></div>
+<p class="fine pd-fine">Preço e disponibilidade podem variar conforme o estoque atual. Confirme no WhatsApp antes de finalizar.</p>
+<ul class="pd-trust">
+<li>${ic('lock')}<div><strong>Compra segura</strong><span>Site com HTTPS e sem pedir dados de cartão</span></div></li>
+<li>${ic('truck-fast')}<div><strong>Entrega em casa</strong><span>Frete grátis acima de R$ ${S.freeShippingFrom}</span></div></li>
+<li>${ic('headset')}<div><strong>Atendimento humano</strong><span>Um vendedor responde você no WhatsApp</span></div></li>
+<li>${ic('box-open')}<div><strong>Produto conferido</strong><span>Separamos e conferimos seu pedido antes do envio</span></div></li>
+</ul>
+</div></div></div></section>
+
+<section class="sec-tight"><div class="container pd-cols">
+<div class="pd-box reveal"><h2>Por que escolher este produto</h2>
+<div class="why">${d.hl.map((h, i) => `<div class="why-i"><span class="ico">${ic(['bolt', 'heart', 'star', 'thumbs-up'][i % 4])}</span><p>${esc(h)}</p></div>`).join('')}</div>
+<p class="who">${ic('user-check')} <span><strong>Indicado para:</strong> ${esc(d.who)}</span></p></div>
+<div class="pd-box reveal"><h2>Ficha do produto</h2>
+<table class="spec"><tbody>
+<tr><th scope="row">Produto</th><td>${esc(p.name)}</td></tr>
+<tr><th scope="row">Conteúdo</th><td>${esc(p.size)}</td></tr>
+<tr><th scope="row">Categoria</th><td>${esc(cat.name)}</td></tr>
+<tr><th scope="row">Como usar</th><td>${esc(d.use)}</td></tr>
+<tr><th scope="row">Compra</th><td>Pedido pelo WhatsApp com atendimento humano</td></tr>
+<tr><th scope="row">Pagamento</th><td>Pix, cartão, criptomoedas ou dinheiro na entrega</td></tr>
+</tbody></table>
+${isMip ? `<p class="legal-note">${ic('circle-info')}<span>Medicamento isento de prescrição. Leia a bula. Persistindo os sintomas, o médico deverá ser consultado.</span></p>` : ''}</div>
+</div></section>
+
+<section class="sec-tight"><div class="container"><div class="band reveal">
+<div><h2>Garanta o seu agora</h2><p>É rápido: toque em comprar, envie a mensagem pronta e nossa equipe confirma tudo com você.</p></div>
+<a class="btn btn-white btn-lg" href="${buy}" target="_blank" rel="noopener noreferrer">${ic('whatsapp')} Comprar pelo WhatsApp</a>
+</div></div></section>
+
+<section class="sec-tight defer"><div class="container">
+<ol class="steps mini">
+<li class="step reveal"><div class="num">1</div><h3>Toque em comprar</h3><p>O WhatsApp abre com o seu pedido já escrito.</p></li>
+<li class="step reveal"><div class="num">2</div><h3>Confirme com a equipe</h3><p>Verificamos o estoque e combinamos pagamento e entrega.</p></li>
+<li class="step reveal"><div class="num">3</div><h3>Receba em casa</h3><p>Seu pedido chega com agilidade e segurança.</p></li>
+</ol></div></section>
+
+<section class="sec defer"><div class="container">
+<div class="sec-head"><div><span class="eyebrow">Veja também</span><h2 class="sec-h">Clientes também levam</h2></div><a class="btn btn-ghost" href="produtos.html">Ver todos ${ic('arrow-right')}</a></div>
+<div class="grid">${related.map((x) => card(x)).join('')}</div></div></section>
+
+<div class="buybar" role="region" aria-label="Comprar ${esc(p.name)}"><div class="bb-info"><span class="bb-name">${esc(p.name)}</span><span class="bb-price">${brl(p.price)}</span></div>
+<a class="btn btn-wa" href="${buy}" target="_blank" rel="noopener noreferrer">${ic('whatsapp')} Comprar</a></div>`;
+
+  page({
+    file: pUrl(p), active: 'produtos', body,
+    title: `${p.name} – ${p.size} | ${S.name}`,
+    desc: `${p.name} (${p.size}) por ${brl(p.price)}. ${p.short} Compre pelo WhatsApp na ${S.name}, com atendimento humano e entrega rápida.`,
+    ld: [
+      { '@context': 'https://schema.org', '@type': 'Product', name: p.name, description: `${p.short} ${p.size}.`, image: `${S.domain}/${IMG[p.slug]}`, category: cat.name, brand: { '@type': 'Brand', name: S.name },
+        offers: { '@type': 'Offer', price: p.price.toFixed(2), priceCurrency: 'BRL', availability: 'https://schema.org/InStock', url: `${S.domain}/${pUrl(p)}`, seller: { '@type': 'Organization', name: S.name } } },
+      { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [['Início', ''], ['Produtos', 'produtos.html'], [p.name, pUrl(p)]].map(([n, u], i) => ({ '@type': 'ListItem', position: i + 1, name: n, item: `${S.domain}/${u}` })) },
     ],
   });
 }
@@ -341,7 +428,7 @@ const faq = [
 <form class="form" id="contactForm" data-wa="${S.whatsapp}">
 <h2>Envie sua mensagem</h2><p>Preencha e continue a conversa no WhatsApp com a nossa equipe.</p>
 <label for="nome">Seu nome</label><input id="nome" name="nome" type="text" required maxlength="80" autocomplete="name" placeholder="Como podemos te chamar?">
-<label for="assunto">Assunto</label><select id="assunto" name="assunto"><option>Quero comprar um produto</option><option>Dúvida sobre um produto</option><option>Entrega e prazos</option><option>Falar com o farmacêutico</option><option>Outro assunto</option></select>
+<label for="assunto">Assunto</label><select id="assunto" name="assunto"><option>Quero comprar um produto</option><option>Dúvida sobre um produto</option><option>Entrega e prazos</option><option>Falar com o vendedor</option><option>Outro assunto</option></select>
 <label for="mensagem">Mensagem</label><textarea id="mensagem" name="mensagem" required maxlength="600" placeholder="Conte como podemos ajudar…"></textarea>
 <button class="btn btn-wa btn-lg btn-block" type="submit">${ic('whatsapp')} Enviar pelo WhatsApp</button>
 <p class="secure">${ic('lock')} Seus dados não ficam salvos neste site</p>
@@ -365,12 +452,12 @@ page({
 <h1 class="hl hl-page">Política de privacidade</h1>
 <p class="sec-p mt-s">Última atualização: ${S.year}. Aqui explicamos, de forma simples, como cuidamos dos seus dados (Lei nº 13.709/2018 – LGPD).</p>
 <h2>1. O que coletamos</h2><p>Este site não possui cadastro, login nem loja com pagamento, e não armazena dados pessoais em servidores próprios. Ao clicar em “Comprar” ou usar o formulário de contato, você é direcionado ao WhatsApp com uma mensagem pré-escrita. A partir daí, os dados que você enviar (nome, endereço, pedido) são tratados na conversa.</p>
-<h2>2. Para que usamos</h2><p>Usamos as informações enviadas pelo WhatsApp apenas para atender seu pedido, tirar dúvidas, combinar pagamento e entrega e cumprir obrigações legais da atividade farmacêutica.</p>
+<h2>2. Para que usamos</h2><p>Usamos as informações enviadas pelo WhatsApp apenas para atender seu pedido, tirar dúvidas, combinar pagamento e entrega e cumprir obrigações legais.</p>
 <h2>3. Cookies e rastreadores</h2><p>Este site não utiliza cookies de publicidade nem ferramentas de rastreamento de terceiros.</p>
 <h2>4. Compartilhamento</h2><p>Não vendemos nem compartilhamos seus dados. O WhatsApp (Meta) possui política própria, que se aplica à conversa realizada na plataforma.</p>
 <h2>5. Seus direitos</h2><p>Você pode solicitar acesso, correção ou exclusão dos dados que tenha nos enviado, a qualquer momento, pelo e-mail ${esc(S.email)} ou pelo WhatsApp.</p>
 <h2>6. Segurança</h2><p>O site é entregue por conexão criptografada (HTTPS) e adota cabeçalhos de segurança modernos para proteger você contra interceptação e ataques comuns na web.</p>
-<h2>7. Controlador</h2><p>${esc(S.legalName)} · CNPJ ${esc(S.cnpj)} · ${esc(addr)}.</p>
+<h2>7. Controlador</h2><p>${esc(S.legalName)}.</p>
 </div></section>`,
 });
 
@@ -417,7 +504,7 @@ write('manifest.webmanifest', JSON.stringify({
 }));
 write('robots.txt', `User-agent: *\nAllow: /\nDisallow: /404.html\n\nSitemap: ${S.domain}/sitemap.xml\n`);
 const today = new Date().toISOString().slice(0, 10);
-write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[['', '1.0'], ['produtos.html', '0.9'], ['contato.html', '0.6'], ['privacidade.html', '0.2']].map(([u, p]) => `<url><loc>${S.domain}/${u}</loc><lastmod>${today}</lastmod><priority>${p}</priority></url>`).join('\n')}\n</urlset>\n`);
+write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[['', '1.0'], ['produtos.html', '0.9'], ['contato.html', '0.6'], ['privacidade.html', '0.2'], ...products.map((p) => [pUrl(p), '0.7'])].map(([u, p]) => `<url><loc>${S.domain}/${u}</loc><lastmod>${today}</lastmod><priority>${p}</priority></url>`).join('\n')}\n</urlset>\n`);
 write('.well-known/security.txt', `Contact: mailto:${S.email}\nExpires: ${new Date(Date.now() + 365 * 864e5).toISOString()}\nPreferred-Languages: pt, en\nCanonical: ${S.domain}/.well-known/security.txt\n`);
 
 const CSP_HDR = CSP + "; frame-ancestors 'none'; upgrade-insecure-requests";

@@ -26,19 +26,12 @@ export const site = {
 
   // Horários (usados na página de contato e nos dados estruturados do Google)
   hours: [
-    { label: 'Segunda a sábado', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '08:00', closes: '21:00' },
+    { label: 'Segunda a sábado', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '08:00', closes: '18:00' },
     { label: 'Domingos e feriados', days: ['Sunday'], opens: '09:00', closes: '18:00' },
   ],
 
   facebook: 'https://www.facebook.com/farmavida',       // TROQUE
-  instagram: 'https://www.instagram.com/farmavida',     // TROQUE
-  googleReviews: 'https://search.google.com/local/writereview?placeid=SEU_PLACE_ID', // TROQUE (ou apague o link no build.mjs)
 
-  // Dados legais obrigatórios no rodapé de farmácias (ANVISA / CRF)
-  cnpj: '00.000.000/0001-00',                           // TROQUE
-  afe: '0.00000.0',                                     // TROQUE (Autorização de Funcionamento)
-  pharmacist: 'Nome do(a) Farmacêutico(a)',             // TROQUE
-  crf: 'CRF-SP 00000',                                  // TROQUE
 
   freeShippingFrom: 99,                                 // frete grátis a partir de R$ (TROQUE ou remova do texto)
   year: 2026,
